@@ -25,15 +25,16 @@ const defaultPrice: Price = {
 };
 function getIceCreamPrice(): void {
   let totalPrice: number = 0;
-  const sizeIceCream = prompt(
-    "Який розмір морозива Ви бажаєте big чи small"
+
+  const sizeIceCream: string | undefined = prompt(
+    "Який розмір морозива Ви бажаєте великий чи маленький"
   )?.toLowerCase();
 
   switch (sizeIceCream) {
-    case "big":
+    case "великий":
       totalPrice += defaultPrice.bigCap;
       break;
-    case "small":
+    case "маленький":
       totalPrice += defaultPrice.smallCap;
       break;
     default:
@@ -41,28 +42,44 @@ function getIceCreamPrice(): void {
       return;
   }
 
-  const filling = prompt(
-    "Яку начинку Ви бажаєте додати\nChocolate\nCaramel\nPerries"
-  )?.toLowerCase();
+  const filling: string[] | undefined = prompt(
+    "Яку начинку Ви бажаєте додати\nШоколад\nКарамель\nЯгоди"
+  )
+    ?.toLowerCase()
+    .trim()
+    .replace(/,/g, "")
+    .split(/\s+/);
 
-  switch (filling) {
-    case "caramel":
-      totalPrice += defaultPrice.filling.caramel;
-      break;
-    case "berries":
-      totalPrice += defaultPrice.filling.berries;
-      break;
-    case "chocolate":
-      totalPrice += defaultPrice.filling.chocolate;
-      break;
-    default:
-      alert("Нажаль ми отримали невірні данні спробуйте ще раз");
-      return;
+  if (filling) {
+    filling?.forEach((taste) => {
+      switch (taste) {
+        case "карамель":
+          totalPrice += defaultPrice.filling.caramel;
+          break;
+        case "ягоди":
+          totalPrice += defaultPrice.filling.berries;
+          break;
+        case "шоколад":
+          totalPrice += defaultPrice.filling.chocolate;
+          break;
+      }
+    });
+  } else {
+    alert("Нажаль ми отримали невірні данні спробуйте ще раз");
+    return;
   }
 
-  const addFilling = confirm("Ви бажаєте додати маршмелоу");
-  addFilling
-    ? alert((totalPrice += defaultPrice.filling.marshmallow))
-    : alert(totalPrice);
+  const addFilling: boolean = confirm("Ви бажаєте додати маршмелоу");
+  let answerForMarshmallow: string;
+  if (addFilling) {
+    totalPrice += defaultPrice.filling.marshmallow;
+    answerForMarshmallow = "так";
+  } else {
+    answerForMarshmallow = "ні";
+  }
+
+  alert(
+    `Ваше замовлення:\nРозмір стаканчика: ${sizeIceCream},\nНаповнення: ${filling},\nМаршмелоу ${answerForMarshmallow}.\nЗагальна сума замовлення скаладє ${totalPrice} грн`
+  );
 }
 getIceCreamPrice();
